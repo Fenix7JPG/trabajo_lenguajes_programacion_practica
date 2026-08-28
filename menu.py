@@ -1,30 +1,6 @@
-def añadir_carrito(carrito,producto,cantidad,productos):
-    if producto in productos:
-        carrito.append((producto,cantidad))
-        print("Producto agregado al carrito.")
-    else:
-        print("Ese producto no existe.")
 
-def total_pagar(carrito,productos):
-    total=0
-    for producto,cantidad in carrito:
-        total+=productos[producto]*cantidad
-    return total
-
-def mostrar_carrito(carrito):
-    if not carrito:
-        print("El carrito está vacío.")
-    else:
-        print("Carrito:")
-        for producto,cantidad in carrito:
-            print(f"{producto}:{cantidad}")
-
-def factura(carrito,cliente="Cliente general",productos=None):
-    print("Factura:")
-    print("Cliente:",cliente)
-    mostrar_carrito(carrito)
-    total=total_pagar(carrito,productos)
-    print("Total a pagar:",total)
+from carrito import *
+from pagos import *
 
 def menu(productos,carrito):
     while True:

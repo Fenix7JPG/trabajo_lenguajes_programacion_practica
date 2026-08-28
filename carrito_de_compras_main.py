@@ -1,4 +1,4 @@
-import carrito_de_compras_modulo
+import menu
 
 carrito=[]
 
@@ -10,4 +10,4 @@ productos={
     "gaseosa":3.50
 }
 
-carrito_de_compras_modulo.menu(productos,carrito)
+menu.menu(productos,carrito)
