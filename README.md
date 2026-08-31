@@ -39,17 +39,14 @@ Esto descarga el repositorio completo a tu PC.
 El ciclo diario con Git es siempre el mismo:
 
 ```bash
-git status                     # Ver qué archivos cambiaron
-git add .                      # Preparar TODOS los cambios
-git commit -m "mensaje"        # Guardar los cambios localmente
-git push origin main           # Subirlos a GitHub
+git pull origin main            # Descargar cambios si hubieron
+git status                      # Ver qué archivos cambiaron
+git add .                       # Preparar TODOS los cambios
+git status                      # Ver cambios efectuados por ti
+git commit -m "mensaje"         # Guardar los cambios localmente
+git push origin main            # Subirlos a GitHub
 ```
 
-Antes de empezar a trabajar, descarga los cambios que subieron tus compañeros:
-
-```bash
-git pull origin main
-```
 
 ### 5. Ramas (branch)
 
