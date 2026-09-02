@@ -119,13 +119,19 @@ def main():
                     entrada_texto.reiniciar()
 
             for palabra in palabras_enemigas:
+                completado = ""
+                if palabra is entrada_texto.palabra_activa:
+                    completado = texto
+                palabra.definir_completado(completado)
                 palabra.actualizar(dt)
 
             for objetivo in balas.avanzar(dt):
-                if objetivo in palabras_enemigas:
-                    palabras_enemigas.remove(objetivo)
-                    puntos = puntos + 1
-                    sonidos.reproducir("explosion_enemigo")
+                puntos = puntos + 1
+                sonidos.reproducir("explosion_enemigo")
+
+            for palabra in list(palabras_enemigas):
+                if palabra.termino_muerte() == True:
+                    palabras_enemigas.remove(palabra)
 
             for palabra in list(palabras_enemigas):
                 if palabra.avanzar(dt, JUGADOR_CX, JUGADOR_CY):

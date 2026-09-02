@@ -59,10 +59,10 @@ def avanzar(dt_ms):
     for bala in list(_balas):
         if bala.avanzar(dt_ms) == True:
             _balas.remove(bala)
-            if bala.objetivo.destruida == True:
+            if bala.objetivo.muriendo == True:
                 continue
-            if bala.objetivo.recibir_impacto() == True:
-                destruidas.append(bala.objetivo)
+            bala.objetivo.iniciar_muerte()
+            destruidas.append(bala.objetivo)
     return destruidas
 
 

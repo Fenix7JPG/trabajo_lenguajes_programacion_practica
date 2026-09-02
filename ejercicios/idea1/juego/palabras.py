@@ -78,6 +78,7 @@ class PalabraObjetivo:
     ESCALA_INICIAL = 2.2
     DURACION_ANIMACION = 350
     DURACION_FALLO = 500
+    DURACION_MUERTE = 300
     RADIO_TOQUE = 46
 
     COLOR_MARCO = (128, 0, 200)
@@ -90,9 +91,11 @@ class PalabraObjetivo:
         self.font = pygame.font.Font(None, self.TAM_FUENTE_BASE)
         self.velocidad = velocidad
 
+        self.completado_valido = ""
         self.balas_disparadas = 0
-        self.impactos = 0
         self.destruida = False
+        self.muriendo = False
+        self.tiempo_muerte = 0
 
         self.tiempo_animacion = 0
         self.tiempo_fallo = 0
@@ -119,6 +122,8 @@ class PalabraObjetivo:
         return pygame.Rect(self.x, self.y, ancho, alto)
 
     def avanzar(self, dt_ms, jugador_cx, jugador_cy):
+        if self.muriendo == True:
+            return False
         dist = self.velocidad * dt_ms / 1000.0
         px, py = self.centro()
         dx = jugador_cx - px
@@ -132,17 +137,24 @@ class PalabraObjetivo:
         self.poner_centro(px, py)
         return d <= self.RADIO_TOQUE
 
+    def definir_completado(self, nuevo_completado):
+        if self.texto.startswith(nuevo_completado):
+            if len(self.completado_valido) == 0 and len(nuevo_completado) > 0:
+                self.tiempo_animacion = self.DURACION_ANIMACION
+            self.completado_valido = nuevo_completado
+
     def registrar_disparo(self):
         self.balas_disparadas = self.balas_disparadas + 1
-        if self.balas_disparadas == 1:
-            self.tiempo_animacion = self.DURACION_ANIMACION
 
-    def recibir_impacto(self):
-        if self.destruida == True:
-            return False
-        self.impactos = self.impactos + 1
-        if self.impactos >= len(self.texto):
-            self.destruida = True
+    def iniciar_muerte(self):
+        if self.muriendo == True:
+            return
+        self.muriendo = True
+        self.destruida = True
+        self.tiempo_muerte = self.DURACION_MUERTE
+
+    def termino_muerte(self):
+        if self.muriendo == True and self.tiempo_muerte == 0:
             return True
         return False
 
@@ -151,9 +163,14 @@ class PalabraObjetivo:
             self.tiempo_animacion = max(0, self.tiempo_animacion - dt)
         if self.tiempo_fallo > 0:
             self.tiempo_fallo = max(0, self.tiempo_fallo - dt)
+        if self.muriendo == True:
+            self.tiempo_muerte = max(0, self.tiempo_muerte - dt)
 
     def dibujar(self, screen):
-        parte_verde = self.texto[:self.balas_disparadas]
+        if self.muriendo == True:
+            self._dibujar_muerte(screen)
+            return
+        parte_verde = self.completado_valido
         parte_blanca = self.texto[len(parte_verde):]
 
         factor_fallo = self.tiempo_fallo / self.DURACION_FALLO
@@ -185,3 +202,24 @@ class PalabraObjetivo:
 
         screen.blit(superficie_verde, (marco_x + padding, marco_y + padding))
         screen.blit(superficie_blanca, (marco_x + padding + superficie_verde.get_width(), marco_y + padding))
+
+    def _dibujar_muerte(self, screen):
+        factor = self.tiempo_muerte / self.DURACION_MUERTE
+
+        superficie_texto = self.font.render(self.texto, True, self.COLOR_VERDE)
+        padding = 10
+        ancho = superficie_texto.get_width() + padding * 2
+        alto = self.font.get_height() + padding * 2
+
+        centro = self.centro()
+        marco = pygame.Rect(0, 0, ancho, alto)
+        marco.center = (int(centro[0]), int(centro[1]))
+
+        crece = int((ancho * 1.2) * (1.0 - factor))
+        pop = marco.inflate(crece, crece)
+
+        lienzo = pygame.Surface(pop.size, pygame.SRCALPHA)
+        pygame.draw.rect(lienzo, self.COLOR_MARCO, lienzo.get_rect(), 3)
+        lienzo.blit(superficie_texto, superficie_texto.get_rect(center=lienzo.get_rect().center))
+        lienzo.set_alpha(int(255 * factor))
+        screen.blit(lienzo, pop.topleft)

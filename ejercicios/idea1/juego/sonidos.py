@@ -11,7 +11,7 @@ import os
 
 import pygame
 
-_CARPETA = os.path.normpath(os.path.join(os.path.dirname(__file__), "..", "..", "assets", "sonidos"))
+_CARPETA = os.path.normpath(os.path.join(os.path.dirname(__file__), "..", "assets", "sonidos"))
 
 NOMBRES = ["explosion_enemigo", "explosion_jugador", "tecla_errada"]
 
