@@ -84,4 +84,3 @@ git switch -c mi-rama
 | `git log --oneline` | Ver historial de commits |
 
 > **Regla de oro:** antes de empujar, siempre `git pull`; antes de COMMIT, revisa con `git status`.
-sisibhjhb
